@@ -12,6 +12,11 @@ average_change = 0   #Average change in profit/loss
 gr_inc = ["", 0]     #Stores row for greatest increase in profit
 gr_dec = ["", 0]     #Stores row for greatest decrease in profit
 
+# Loop variables
+prev_row = ["", 0]    #Tracks the previous row. Initial value is just empty
+cur_change = 0        #Change of current row in the loop
+av_change_col = []    #Collection of all the average changes
+
 
 
 ###########################################################################################
@@ -24,11 +29,7 @@ with open(data_path) as bank_data:
 
     file_reader = csv.reader(bank_data, delimiter=',')
 
-    next(file_reader)  #Skip the header row
-
-    prev_row = ["", 0]      #Tracks the previous row. Initial value is just empty
-    cur_change = 0          #Change of current row in the loop
-    av_change_col = []      #Collection of all the average changes
+    header = next(file_reader)  #Skip the header row
 
     for row in file_reader:
         net_profit = net_profit + int(row[1])        #Add the profit/loss from this row
@@ -67,8 +68,8 @@ with open(data_path) as bank_data:
     # Printing out the results in the terminal
 
     print("\n")
-    print("Financial Analysis \n")
-    print("---------------------------- \n")
+    print("Financial Analysis")
+    print("----------------------------")
     print(f"Total Months: {len(av_change_col)}")
     print(f"Total: ${net_profit}")
     print(f"Average Change: ${average_change}")
