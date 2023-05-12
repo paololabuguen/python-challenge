@@ -18,11 +18,9 @@ cur_change = 0        #Change of current row in the loop
 av_change_col = []    #Collection of all the average changes
 
 
-
 ###########################################################################################
 ######   This part is where we read the data and extract the important information   ######
 ###########################################################################################
-
 
 
 with open(data_path) as bank_data:
@@ -30,6 +28,17 @@ with open(data_path) as bank_data:
     file_reader = csv.reader(bank_data, delimiter=',')
 
     header = next(file_reader)  #Skip the header row
+
+    # Set previous row as the first row and current change to 0. This is because there are no changes yet
+    prev_row = next(file_reader)
+    av_change_col.append(cur_change)
+
+    # Set the greatest increase and greatest decrease values from the first row 
+    gr_inc = [prev_row[0], cur_change]
+    gr_dec = [prev_row[0], cur_change]
+
+    # Add profit of first row to total
+    net_profit += int(prev_row[1])
 
     for row in file_reader:
         net_profit = net_profit + int(row[1])        #Add the profit/loss from this row
@@ -40,7 +49,6 @@ with open(data_path) as bank_data:
 
         av_change_col.append(cur_change)             #Appends the current change to the 
                                                      #list of all previous changes
-
 
         # Comparing if the current change is greater than the previous greatest increase
         # and replaces the greatest increase with the new one including the date
@@ -60,9 +68,10 @@ with open(data_path) as bank_data:
 
     # Calculate the average change of all the profit/loss 
     for change in av_change_col:
-        average_change = average_change + change
+        average_change += change
     
-    average_change = average_change / len(av_change_col) 
+    average_change = average_change / (len(av_change_col) - 1) # Average change not
+                                                               # including first row
 
 
     # Printing out the results in the terminal
@@ -72,7 +81,7 @@ with open(data_path) as bank_data:
     print("----------------------------")
     print(f"Total Months: {len(av_change_col)}")
     print(f"Total: ${net_profit}")
-    print(f"Average Change: ${average_change}")
+    print(f"Average Change: ${round(average_change, 2)}")
     print(f"Greatest increase in Profit: {gr_inc[0]} (${gr_inc[1]})")
     print(f"Greatest decrease in Profit: {gr_dec[0]} (${gr_dec[1]})")
 
